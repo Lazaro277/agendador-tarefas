@@ -1,0 +1,15 @@
+.input {
+    padding: 7px 10px;
+    border: none;
+    outline: none;
+    width: 300px;
+}
+
+.link-menu {
+    text-decoration: none;
+    color: white;
+}
+
+.link-menu:hover {
+    text-decoration: underline;
+}
