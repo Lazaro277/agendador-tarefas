@@ -3,6 +3,7 @@
     border: none;
     outline: none;
     width: 300px;
+    border-radius: 10px;
 }
 
 .link-menu {
