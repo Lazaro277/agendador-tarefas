@@ -1,39 +1,422 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <!-- BootStrap -->
     <link href="css/bootstrap/style.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
     <title>Agendador de tarefas</title>
-  </head>
+</head>
 
-  <body>
+<body onload="carregaListaTarefas()">
 
-    <div class="container align-content-center" style="height: 100vh;">
-      <div class="row">
-        <div class="col text-center d-flex justify-content-center">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <div class="container">
+            <a href="login.html" class="navbar-brand h1 mb-1">
+                Agendador de Tarefas
+            </a>
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="menu">
+                <img src="img/foto-de-perfil-padrao.jpg" alt="foto de perfil" class="rounded-circle"
+                    style="width: 30px;">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Olá,
+                            <span>Fulano</span></a>
 
-        <div class="bg-secondary p-5 rounded-4" style="box-shadow: black 10px 10px 30px;">
-          <h1 class="text-black">Agendador de tarefas</h1>
-
-          <form action="">
-            <br /><input type="email" id="email" placeholder="E-mail:" class="input mt-4" /><br />
-            <br /><input type="password" id="senha" placeholder="Senha:" class="input mb-3" /><br />
-
-            <button type="button" class="btn btn-primary mb-4" onclick="entrar()">Entrar</i></button><br>
-
-          <a href="esqueceu-senha.html" class="link-menu pe-5">Esqueceu a senha?</a>
-          <a href="cadastrar.html" class="link-menu">Cadastre-se</a>
-</div>
+                        <ul class="dropdown-menu">
+                            <li><a data-bs-toggle="modal" data-bs-target="#modalPerfil" class="dropdown-item">Meu
+                                    Perfil</a></li>
+                            <li><a href="#" class="dropdown-item">Minhas tarefas</a></li>
+                            <li><a data-bs-toggle="modal" data-bs-target="#modalCadastro" class="dropdown-item">Criar
+                                    nova tarefa</a></li>
+                            <li><a href="login.html" class="dropdown-item">Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+                <p class="fs-1 fw-medium ms-1 mt-5">Tarefas - filtrar</p>
+
+                <div class="row mb-3 g-3 g-md-4">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" placeholder="Nome da tarefa" id="nomeTarefaFiltro" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <select class="form-select" id="ano">
+                            <option value="">Ano</option>
+                            <option value="2025">2025</option>
+                            <option value="2025">2026</option>
+                            <option value="2025">2027</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select class="form-select" id="mes">
+                            <option value="">Mês</option>
+                            <option value="01">Janeiro</option>
+                            <option value="02">Fevereiro</option>
+                            <option value="03">Março</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Maio</option>
+                            <option value="06">Junho</option>
+                            <option value="07">Julho</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" placeholder="Dia" id="dia" />
+                    </div>
+
+                </div>
+
+                <div class="row g-3 g-md-4">
+                    <div class="col">
+                        <select class="form-select" id="status">
+                            <option value="">Status</option>
+                            <option value="1">Pendente</option>
+                            <option value="2">Em andamento</option>
+                            <option value="3">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select class="form-select" id="prioridade">
+                            <option value="">Prioridade</option>
+                            <option value="1">Baixa</option>
+                            <option value="2">Média</option>
+                            <option value="3">Alta</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select class="form-select" id="categoria">
+                            <option value="">Categoria</option>
+                            <option value="1">Trabalho</option>
+                            <option value="1">Estudos</option>
+                            <option value="1">Pessoal</option>
+                            <option value="1">Outros</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-1 d-flex justify-content-end">
+                        <button type="button" class="btn btn-dark" onclick="pesquisarTarefa()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="position-fixed nenhumaTarefa translate-middle lead text-center d-none"
+                    id="mensagemSemTarefas">
+                    Nenhuma tarefa, crie sua primeira tarefa agora mesmo clicando no ícone abaixo!!
+                </div>
+
+                <div class="row mt-3 mt-md-5 pt-2 d-none" id="tabelaTarefas">
+                    <div class="col">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Nome</th>
+                                    <th>Status</th>
+                                    <th>Prioridade</th>
+                                    <th>Categoria</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="listaTarefas"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal fade" tabindex="-1" id="modalPerfil"> <!-- Início modal Meu Perfil -->
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Meu perfil</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="text-center">
+                                    <img src="img/foto-de-perfil-padrao.jpg" alt="foto de perfil" class="rounded-circle"
+                                        style="width: 100px;">
+                                </div>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="nomeMeuPerfil" class="form-label">Nome:</label>
+                                        <input type="text" class="form-control" id="nomeMeuPerfil"
+                                            value="Nome completo do usuário" disabled>
+                                    </div>
+                                    <label for="sobreMimMeuPerfil" class="form-label">Sobre mim:</label>
+                                    <div class="mb-3">
+                                        <textarea id="sobreMimMeuPerfil" name="sobreMimMeuPerfil" rows="3" cols="60"
+                                            class="p-1"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dataNascimentoMeuPerfil" class="form-label">Data de
+                                            Nascimento:</label>
+                                        <input type="date" class="form-control" id="dataNascimentoMeuPerfil" value=""
+                                            disabled>
+                                    </div>
+
+                                    <label for="emailMeuPerfil" class="form-label">Email:</label>
+                                    <div class="input-group mb-3">
+                                        <input type="email" class="form-control" value="emailusuario@gmail.com">
+                                        <a data-bs-toggle="modal" data-bs-target="#modalRedefinirEmail"
+                                            class="btn btn-primary" type="button" id="alterarEmailMeuPerfil">Alterar</a>
+                                    </div>
+                                    <label for="senhaMeuPerfil" class="form-label">Senha:</label>
+                                    <div class="input-group mb-3">
+                                        <input type="password" class="form-control" value="senha do usuario">
+                                        <a data-bs-toggle="modal" data-bs-target="#modalRedefinirSenha"
+                                            class="btn btn-primary" type="button" id="alterarSenhaMeuPerfil">Alterar</a>
+                                    </div>
+
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-success">Salvar alterações</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal Meu Perfil -->
+
+                <div class="modal fade" tabindex="-1" id="modalRedefinirEmail">
+                    <!-- Início modal Redefinir email -->
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Alteração de email</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p>Digite o código de verificação enviado para <span
+                                        class="lead fs-5">emailnovo@gmail.com</span>:</p>
+                                <input type="text"
+                                    class=" border-top-0 border-start-0 border-end-0 bg-dark border-light text-light"
+                                    id="">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-success">Redefinir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal Redefinir email -->
+
+                <div class="modal fade" tabindex="-1" id="modalRedefinirSenha">
+                    <!-- Início modal Redefinir senha -->
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Alteração de senha</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p>Digite o código de verificação enviado para <span
+                                        class="lead fs-5">****ail@gmail.com</span>:</p>
+                                <input type="text"
+                                    class=" border-top-0 border-start-0 border-end-0 bg-dark border-light text-light"
+                                    id="">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button data-bs-toggle="modal" data-bs-target="#modalCadastrarNovaSenha" type="button"
+                                    class="btn btn-success">Continuar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal Redefinir senha -->
+
+                <div class="modal fade" tabindex="-1" id="modalCadastrarNovaSenha">
+                    <!-- Início modal Cadastrar nova senha -->
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Alteração de senha</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p>Digite sua nova senha:</p>
+                                <input type="password" class="form-control bg-dark border-light text-light" id="">
+                                <p>Confirme sua senha:</p>
+                                <input type="password" class="form-control bg-dark border-light text-light" id="">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-success">Alterar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal Cadastrar nova senha -->
+
+                <div class="modal fade" tabindex="-1" id="modalCadastro"> <!-- Início modal Cadastro tarefa -->
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Cadastro de tarefa</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close" onclick="limparCampos()"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="nomeTarefa" class="form-label fw-bold">Nome da tarefa:</label>
+                                        <input type="text" class="form-control" id="nomeTarefa" value="">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dataTarefa" class="form-label fw-bold">Data de Entrega:</label>
+                                        <input type="date" class="form-control" id="dataTarefa" value="">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Status:</label><br>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="statusPendente" value="Pendente">
+                                            <label class="form-check-label" for="statusPendente">
+                                                Pendente
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="statusEmAndamento" value="Em Andamento">
+                                            <label class="form-check-label" for="statusEmAndamento">
+                                                Em Andamento
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="statusConcluido" value="Concluído">
+                                            <label class="form-check-label" for="statusConcluido">
+                                                Concluído
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Prioridade:</label><br>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="prioridade"
+                                                id="prioridadeBaixa" value="Baixa">
+                                            <label class="form-check-label" for="prioridadeBaixa">
+                                                Baixa
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="prioridade"
+                                                id="prioridadeMedia" value="Média">
+                                            <label class="form-check-label" for="prioridadeMedia">
+                                                Média
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="prioridade"
+                                                id="prioridadeAlta" value="Alta">
+                                            <label class="form-check-label" for="prioridadeAlta">
+                                                Alta
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Categoria:</label><br>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="categoria"
+                                                id="categoriaTrabalho" value="Trabalho">
+                                            <label class="form-check-label" for="categoriaTrabalho">
+                                                Trabalho
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="categoria"
+                                                id="categoriaEstudos" value="Estudos">
+                                            <label class="form-check-label" for="categoriaEstudos">
+                                                Estudos
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="categoria"
+                                                id="categoriaPessoal" value="Pessoal">
+                                            <label class="form-check-label" for="categoriaPessoal">
+                                                Pessoal
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="categoria"
+                                                id="categoriaOutros" value="Outros">
+                                            <label class="form-check-label" for="categoriaOutros">
+                                                Outros
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <label for="obsTarefa" class="form-label fw-bold">Observações:</label>
+                                    <div class="mb-3">
+                                        <textarea id="obsTarefa" name="obsTarefa" rows="3" cols="50"
+                                            class="p-1"></textarea>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="limparCampos()">Cancelar</button>
+                                <button type="button" class="btn btn-success" onclick="cadastrarTarefa()">Salvar
+                                    tarefa</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal Cadastro tarefa -->
+
+                <div class="modal fade" id="modalRegistraTarefa" tabindex="-1" aria-labelledby="exampleModalLabel">
+                    <!-- Início modal validação de dados -->
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 id="titleModal"></h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="bodyModal"></div>
+                            <div class="modal-footer">
+                                <a href="index.html" id="btn2Modal"></a>
+                                <button type="button" id="btnModal" data-bs-dismiss="modal"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal validação de dados -->
+
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modalCadastro"
+                    class="btn position-fixed bottom-0 end-0 me-3 mb-3 pb-0"><i
+                        class="bi bi-plus-circle-fill fs-70px"></i></button>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript -->
@@ -41,9 +424,7 @@
     <!-- BootStrap -->
     <script src="libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Font Awesome -->
-    <script
-      src="https://kit.fontawesome.com/90b19570b9.js"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+    <script src="https://kit.fontawesome.com/90b19570b9.js" crossorigin="anonymous"></script>
+</body>
+
 </html>

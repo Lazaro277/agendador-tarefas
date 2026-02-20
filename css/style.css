@@ -1,16 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 .input {
-    padding: 7px 10px;
-    border: none;
-    outline: none;
-    width: 300px;
-    border-radius: 10px;
+  padding: 7px 10px;
+  border: none;
+  outline: none;
+  width: 300px;
+  border-radius: 10px;
 }
 
 .link-menu {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 .link-menu:hover {
-    text-decoration: underline;
+  text-decoration: underline;
+}
+
+.fs-70px {
+  font-size: 70px;
+}
+
+.nenhumaTarefa {
+  top: 80%;
+  left: 50%;
+}
+
+@media (min-width: 768px)  {
+  .nenhumaTarefa {
+    top: 60%;
+  }
 }
