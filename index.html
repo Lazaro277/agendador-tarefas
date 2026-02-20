@@ -55,68 +55,48 @@
                     <div class="col-md-6">
                         <input type="text" class="form-control" placeholder="Nome da tarefa" id="nomeTarefaFiltro" />
                     </div>
-
-                    <div class="col-md-2">
-                        <select class="form-select" id="ano">
-                            <option value="">Ano</option>
-                            <option value="2025">2025</option>
-                            <option value="2025">2026</option>
-                            <option value="2025">2027</option>
-                        </select>
+                    
+                    <div class="col-md-3">
+                        <input type="text" id="dataTarefaFiltro" placeholder="Data da tarefa"
+                        onfocus="this.type='date'" onblur="if (!this.value) this.type='text'" class="form-control" />
                     </div>
-
-                    <div class="col-md-2">
-                        <select class="form-select" id="mes">
-                            <option value="">Mês</option>
-                            <option value="01">Janeiro</option>
-                            <option value="02">Fevereiro</option>
-                            <option value="03">Março</option>
-                            <option value="04">Abril</option>
-                            <option value="05">Maio</option>
-                            <option value="06">Junho</option>
-                            <option value="07">Julho</option>
-                            <option value="08">Agosto</option>
-                            <option value="09">Setembro</option>
-                            <option value="10">Outubro</option>
-                            <option value="11">Novembro</option>
-                            <option value="12">Dezembro</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" placeholder="Dia" id="dia" />
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Observações" id="obsTarefaFiltro" />
                     </div>
 
                 </div>
 
                 <div class="row g-3 g-md-4">
                     <div class="col">
-                        <select class="form-select" id="status">
+                        <select class="form-select" id="statuFiltro">
                             <option value="">Status</option>
-                            <option value="1">Pendente</option>
-                            <option value="2">Em andamento</option>
-                            <option value="3">Concluído</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Em Andamento">Em andamento</option>
+                            <option value="Concluído">Concluído</option>
                         </select>
                     </div>
                     <div class="col">
-                        <select class="form-select" id="prioridade">
+                        <select class="form-select" id="prioridadeFiltro">
                             <option value="">Prioridade</option>
-                            <option value="1">Baixa</option>
-                            <option value="2">Média</option>
-                            <option value="3">Alta</option>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
                         </select>
                     </div>
                     <div class="col">
-                        <select class="form-select" id="categoria">
+                        <select class="form-select" id="categoriaFiltro">
                             <option value="">Categoria</option>
-                            <option value="1">Trabalho</option>
-                            <option value="1">Estudos</option>
-                            <option value="1">Pessoal</option>
-                            <option value="1">Outros</option>
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Estudos">Estudos</option>
+                            <option value="Pessoal">Pessoal</option>
+                            <option value="Outros">Outros</option>
                         </select>
                     </div>
 
-                    <div class="col-md-1 d-flex justify-content-end">
+                    <div class="col-md-2 d-flex justify-content-end">
+                        <a href="index.html" class="btn btn-dark me-1 text-danger" onclick="limparCampos()">
+                            <i class="bi bi-x-lg"></i></i>
+                        </a>
                         <button type="button" class="btn btn-dark" onclick="pesquisarTarefa()">
                             <i class="fas fa-search"></i>
                         </button>
@@ -126,6 +106,10 @@
                 <div class="position-fixed nenhumaTarefa translate-middle lead text-center d-none"
                     id="mensagemSemTarefas">
                     Nenhuma tarefa, crie sua primeira tarefa agora mesmo clicando no ícone abaixo!!
+                </div>
+                <div class="position-fixed nenhumaTarefa translate-middle lead text-center d-none"
+                    id="mensagemSemTarefasFiltro">
+                    Nenhuma tarefa encontrada!!
                 </div>
 
                 <div class="row mt-3 mt-md-5 pt-2 d-none" id="tabelaTarefas">
@@ -138,6 +122,7 @@
                                     <th>Status</th>
                                     <th>Prioridade</th>
                                     <th>Categoria</th>
+                                    <th>Observações</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -405,8 +390,8 @@
                             </div>
                             <div class="modal-body" id="bodyModal"></div>
                             <div class="modal-footer">
-                                <a href="index.html" id="btn2Modal"></a>
-                                <button type="button" id="btnModal" data-bs-dismiss="modal"></button>
+                                <a href="index.html" id="btn2Modal" data-bs-dismiss="modal"></a>
+                                <a type="button" id="btnModal" data-bs-dismiss="modal"></a>
                             </div>
                         </div>
                     </div>
