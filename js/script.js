@@ -721,3 +721,75 @@ document.getElementById('modalPerfil').addEventListener('hidden.bs.modal', funct
     document.getElementById('imgPerfilModal').src = fotoSalva ? fotoSalva : fotoPadrao;
     document.getElementById('inputFotoPerfil').value = '';
 });
+
+function recuperarSenha() {
+    let email = document.getElementById('emailRecuperacao').value
+    
+    if(email === '') {
+        let modal = new Modal(
+            "Campo vazio",
+            "danger",
+            "Por favor, informe um e-mail.",
+            "Voltar",
+            "d-none"
+        );
+        modal.mostrarModal();
+        return;
+    }
+
+    let usuarioEncontrado = null
+    let id = localStorage.getItem('id')
+
+    for (let i = 1; i <= id; i++) {
+        let usuario = JSON.parse(localStorage.getItem(i))
+        if (usuario && usuario.cadastroEmail === email) {
+            usuarioEncontrado = usuario
+            break
+        }
+    }
+
+    if (usuarioEncontrado) {
+        // Parâmetros que serão enviados para o template do EmailJS
+        const templateParams = {
+            to_name: usuarioEncontrado.cadastroNome,
+            to_email: email,
+            // Como é um projeto local, estamos enviando a senha recuperada. 
+            // Em um sistema real, enviaríamos um link com token único.
+            message: "Sua senha recuperada é: " + usuarioEncontrado.cadastroSenha 
+        };
+
+        // Substitua 'SERVICE_ID' e 'TEMPLATE_ID' pelos IDs criados no painel do EmailJS
+        emailjs.send('SERVICE_ID', 'TEMPLATE_ID', templateParams)
+            .then(function(response) {
+                let modal = new Modal(
+                    "Sucesso",
+                    "success",
+                    "E-mail enviado com sucesso para " + email,
+                    "Voltar ao Login",
+                    "d-none",
+                    null,
+                    'cadastrarTrue'
+                );
+                modal.mostrarModal();
+            }, function(error) {
+                console.log('ERRO AO ENVIAR:', error);
+                let modal = new Modal(
+                    "Erro",
+                    "danger",
+                    "Falha ao enviar o e-mail. Verifique as configurações do EmailJS.",
+                    "Tentar novamente",
+                    "d-none"
+                );
+                modal.mostrarModal();
+            });
+    } else {
+        let modal = new Modal(
+            "Erro",
+            "danger",
+            "E-mail não encontrado em nossa base de dados.",
+            "Tentar novamente",
+            "d-none"
+        );
+        modal.mostrarModal();
+    }
+}

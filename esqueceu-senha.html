@@ -1,50 +1,72 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css" />
-    <!-- BootStrap -->
-    <link href="css/bootstrap/style.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-    />
-    <title>Agendador de tarefas</title>
-  </head>
 
-  <body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="img/faviconn.png" type="image/x-icon">
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- BootStrap -->
+  <link href="css/bootstrap/style.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+  <title>Agendador de tarefas</title>
+</head>
 
-    <div class="container align-content-center" style="height: 100vh;">
-      <div class="row">
-        <div class="col text-center d-flex justify-content-center">
+<body>
+
+  <div class="container align-content-center" style="height: 100vh;">
+    <div class="row">
+      <div class="col text-center d-flex justify-content-center">
 
         <div class="bg-secondary p-5 rounded-4" style="box-shadow: black 10px 10px 30px;">
           <h1 class="text-black">Agendador de tarefas</h1>
 
-          <p class="mb-0 mt-4 text-black" >Informe o e-mail que será enviado o link de redefinição de senha.</p>
-          
+          <p class="mb-0 mt-4 text-black">Informe o e-mail que será enviado o link de redefinição de senha.</p>
+
           <form action="" class="pt-0">
-            <br /><input type="email" id="email" placeholder="E-mail:" class="input" /><br />
+            <br /><input type="email" id="emailRecuperacao" placeholder="E-mail:" class="input" /><br />
 
-            <button type="button" class="btn btn-primary my-4" onclick="recuperarSenha()">Recuperar senha</i></button><br>
+            <button type="button" class="btn btn-primary my-4" onclick="recuperarSenha()">Recuperar
+              senha</i></button><br>
 
-          <a href="login.html" class="link-menu">Voltar ao login</a>
-</div>
+            <a href="login.html" class="link-menu">Voltar ao login</a>
         </div>
+
+        <div class="modal fade" id="modalRegistraTarefa" tabindex="-1" aria-labelledby="exampleModalLabel">
+          <!-- Início modal validação de dados -->
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 id="titleModal"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="bodyModal"></div>
+              <div class="modal-footer">
+                <a href="index.html" id="btn2Modal" data-bs-dismiss="modal"></a>
+                <a type="button" id="btnModal" data-bs-dismiss="modal"></a>
+              </div>
+            </div>
+          </div>
+        </div> <!-- Fim modal validação de dados -->
       </div>
     </div>
+  </div>
 
-    <!-- JavaScript -->
-    <script src="js/script.js"></script>
-    <!-- BootStrap -->
-    <script src="libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Font Awesome -->
-    <script
-      src="https://kit.fontawesome.com/90b19570b9.js"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+  <!-- JavaScript -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function () {
+        // INICIALIZAÇÃO DO EMAILJS
+        // Você precisará criar uma conta no emailjs.com e substituir "SUA_PUBLIC_KEY" pela chave fornecida lá.
+        emailjs.init("SUA_PUBLIC_KEY");
+      })();
+    </script>
+  <script src="js/script.js"></script>
+  <!-- BootStrap -->
+  <script src="libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/90b19570b9.js" crossorigin="anonymous"></script>
+</body>
+
 </html>
