@@ -1,5 +1,5 @@
 class Tarefa {
-    constructor(nomeTarefa, dataTarefa, statusSelecionado, prioridadeSelecionada, categoriaSelecionada, obsTarefa
+    constructor(nomeTarefa, dataTarefa, statusSelecionado, prioridadeSelecionada, categoriaSelecionada, obsTarefa, emailUser
     ) {
         this.nomeTarefa = nomeTarefa
         this.dataTarefa = dataTarefa
@@ -7,6 +7,7 @@ class Tarefa {
         this.prioridadeSelecionada = prioridadeSelecionada
         this.categoriaSelecionada = categoriaSelecionada
         this.obsTarefa = obsTarefa
+        this.emailUser = emailUser
     }
 
     validarDados() {
@@ -31,6 +32,7 @@ class Usuario {
 
     validarDados() {
         let isValid = 'ok'
+        let cadastroEmail = document.getElementById('cadastroEmail')
 
         // Validar Nome
         if (this.cadastroNome == undefined || this.cadastroNome == "" || this.cadastroNome == null) {
@@ -67,6 +69,20 @@ class Usuario {
         if (!this.cadastroEmail || !emailRegex.test(this.cadastroEmail)) {
             isValid = 'emailInvalido'
             return isValid
+        }
+
+        let id = localStorage.getItem('id')
+        //recupera todas as tarefas armazenadas em localStorage
+        for (let i = 1; i <= id; i++) {
+            let usuario = JSON.parse(localStorage.getItem(i))
+
+            if (usuario === null) {
+                continue
+            }
+            if (usuario.cadastroEmail == cadastroEmail.value) {
+                isValid = 'emailExiste'
+                return isValid
+            }
         }
 
         // Validar Senha null
@@ -126,6 +142,7 @@ class Bd {
 
     recuperarTodosRegistros() {
         let tarefas = Array()
+        let emailUser = localStorage.getItem('usuarioExisteEmail')
 
         let id = localStorage.getItem('id')
 
@@ -135,6 +152,12 @@ class Bd {
             let tarefa = JSON.parse(localStorage.getItem(i))
 
             if (tarefa === null) {
+                continue
+            }
+            if (tarefa.dataTarefa == undefined) {
+                continue
+            }
+            if (tarefa.emailUser !== emailUser) {
                 continue
             }
             tarefa.id = i
@@ -231,6 +254,7 @@ function cadastrarTarefa() {
     let prioridadeSelecionada = document.querySelector('input[name="prioridade"]:checked');
     let categoriaSelecionada = document.querySelector('input[name="categoria"]:checked');
     let obsTarefa = document.getElementById('obsTarefa')
+    let emailUser = localStorage.getItem('usuarioExisteEmail')
 
     let tarefa = new Tarefa(
         nomeTarefa.value,
@@ -238,7 +262,8 @@ function cadastrarTarefa() {
         statusSelecionado ? statusSelecionado.value : '',
         prioridadeSelecionada ? prioridadeSelecionada.value : '',
         categoriaSelecionada ? categoriaSelecionada.value : '',
-        obsTarefa.value
+        obsTarefa.value,
+        emailUser
     )
 
     if (tarefa.validarDados()) {
@@ -347,6 +372,17 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
+    } else if (usuario.validarDados() == 'emailExiste') {
+        let modal = new Modal(
+            "E-mail já cadastrado",
+            "success",
+            "E-mail já registrado em nosso sistema!",
+            "Login",
+            "btn btn-secondary",
+            "Voltar",
+            'cadastrarTrue'
+        );
+        modal.mostrarModal();
     } else if (usuario.validarDados() == 'senha') {
         let modal = new Modal(
             "Você deve informar uma senha",
@@ -416,6 +452,35 @@ function limparCamposCadastrar() {
 }
 
 function carregaListaTarefas(tarefas = Array(), filtro = false) {
+
+    let nomeUser = localStorage.getItem('nomeUser')
+    let usuarioExisteEmail = localStorage.getItem('usuarioExisteEmail')
+    let dataNascimentoUser = localStorage.getItem('dataNascimentoUser')
+    nomeUser = nomeUser.charAt(0).toUpperCase() + nomeUser.slice(1);
+    document.getElementById('nomeMeuPerfil').value = nomeUser
+    document.getElementById('dataNascimentoMeuPerfil').value = dataNascimentoUser
+    document.getElementById('emailMeuPerfil').value = usuarioExisteEmail
+
+    // Carregar "Sobre mim" do usuário logado
+    let id = localStorage.getItem('id')
+    for (let i = 1; i <= id; i++) {
+        let usuario = JSON.parse(localStorage.getItem(i))
+        if (usuario && usuario.cadastroEmail === usuarioExisteEmail) {
+            document.getElementById('sobreMimMeuPerfil').value = usuario.sobreMim || ''
+            
+            // Carregar foto de perfil salva do usuário
+            if (usuario.fotoPerfil) {
+                let imgNav = document.querySelector('.navbar-collapse img');
+                if(imgNav) imgNav.src = usuario.fotoPerfil;
+                let imgModal = document.getElementById('imgPerfilModal');
+                if(imgModal) imgModal.src = usuario.fotoPerfil;
+            }
+            break
+        }
+    }
+
+    nomeUser = nomeUser.split(' ')
+    document.getElementById('nomeUser').innerHTML = nomeUser[0]
 
     if (tarefas.length == 0 && filtro == false) {
         tarefas = bd.recuperarTodosRegistros()
@@ -504,9 +569,9 @@ function entrar() {
     let usuarios = Array()
     let email = document.getElementById('email')
     let senha = document.getElementById('senha')
+    let usuarioExisteEmail
 
     let id = localStorage.getItem('id')
-    let usuarioExisteEmail
 
 
     //recupera todas as tarefas armazenadas em localStorage
@@ -514,15 +579,15 @@ function entrar() {
         //recupera a despesa
         let usuario = JSON.parse(localStorage.getItem(i))
         usuarioExisteEmail = null
-        
+
         if (usuario === null) {
             continue
         }
-        
+
         if (usuario.dataTarefa != undefined) {
             continue
         }
-        
+
         if (email.value == '') {
             usuarioExisteEmail = undefined
             let modal = new Modal(
@@ -541,6 +606,10 @@ function entrar() {
         if (usuario.cadastroEmail === email.value) {
             usuarioExisteEmail = usuario.cadastroEmail
             if (usuario.cadastroSenha === senha.value) {
+                localStorage.setItem('usuarioExisteEmail', usuarioExisteEmail)
+                localStorage.setItem('nomeUser', usuario.cadastroNome)
+                localStorage.setItem('dataNascimentoUser', usuario.cadastroDataNascimento)
+                // A foto será carregada pelo carregaListaTarefas no index
                 window.location.href = "index.html"
             } else {
                 let modal = new Modal(
@@ -576,3 +645,79 @@ function entrar() {
 
 
 }
+
+function atualizarFotoPerfil(input) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            // Atualiza a imagem no modal
+            document.getElementById('imgPerfilModal').src = e.target.result;
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removerFotoPerfil() {
+    let fotoPadrao = 'img/foto-de-perfil-padrao.jpg';
+    document.getElementById('imgPerfilModal').src = fotoPadrao;
+    document.getElementById('inputFotoPerfil').value = ''; // Limpa o input file
+}
+
+function salvarPerfil() {
+    let imgModal = document.getElementById('imgPerfilModal');
+    let src = imgModal.src;
+    let fotoPadrao = 'img/foto-de-perfil-padrao.jpg';
+    
+        // Salvar "Sobre mim" nos dados do usuário
+        let sobreMim = document.getElementById('sobreMimMeuPerfil').value
+        let emailUser = localStorage.getItem('usuarioExisteEmail')
+        let id = localStorage.getItem('id')
+
+        for (let i = 1; i <= id; i++) {
+            let usuario = JSON.parse(localStorage.getItem(i))
+            if (usuario && usuario.cadastroEmail === emailUser) {
+                usuario.sobreMim = sobreMim
+
+                // Salvar foto no objeto do usuário
+                if (src.includes(fotoPadrao)) {
+                    delete usuario.fotoPerfil;
+                } else {
+                    usuario.fotoPerfil = src;
+                }
+
+                localStorage.setItem(i, JSON.stringify(usuario))
+                break
+            }
+        }
+
+    // Atualiza a navbar imediatamente
+    let imgNav = document.querySelector('.navbar-collapse img');
+    if (imgNav) imgNav.src = src;
+    
+    // Fecha o modal
+    let modalElement = document.getElementById('modalPerfil');
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) modalInstance.hide();
+    window.location.reload()
+}
+
+// Reseta a imagem do modal ao fechar se não tiver salvo (descarta alterações)
+document.getElementById('modalPerfil').addEventListener('hidden.bs.modal', function () {
+    let emailUser = localStorage.getItem('usuarioExisteEmail')
+    let id = localStorage.getItem('id')
+    let fotoSalva = null
+
+    for (let i = 1; i <= id; i++) {
+        let usuario = JSON.parse(localStorage.getItem(i))
+        if (usuario && usuario.cadastroEmail === emailUser) {
+            fotoSalva = usuario.fotoPerfil
+            break
+        }
+    }
+
+    let fotoPadrao = 'img/foto-de-perfil-padrao.jpg';
+    document.getElementById('imgPerfilModal').src = fotoSalva ? fotoSalva : fotoPadrao;
+    document.getElementById('inputFotoPerfil').value = '';
+});
