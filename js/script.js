@@ -21,6 +21,86 @@ class Tarefa {
     }
 }
 
+class Usuario {
+    constructor(cadastroNome, cadastroDataNascimento, cadastroEmail, cadastroSenha) {
+        this.cadastroNome = cadastroNome
+        this.cadastroDataNascimento = cadastroDataNascimento
+        this.cadastroEmail = cadastroEmail
+        this.cadastroSenha = cadastroSenha
+    }
+
+    validarDados() {
+        let isValid = 'ok'
+
+        // Validar Nome
+        if (this.cadastroNome == undefined || this.cadastroNome == "" || this.cadastroNome == null) {
+            isValid = 'nome'
+            return isValid
+        }
+
+        const nomeRegex = /^[a-zA-Z\u00C0-\u00FF\s]+$/
+        if (!nomeRegex.test(this.cadastroNome)) {
+            isValid = 'nomeInvalido'
+            return isValid
+        }
+
+        // Validar Data
+        if (!this.cadastroDataNascimento == undefined || this.cadastroDataNascimento == "" || this.cadastroDataNascimento == null) {
+            isValid = 'dataNascimento'
+            return isValid
+        }
+
+        let dataSeparada = this.cadastroDataNascimento.split('/')
+        if (dataSeparada[2] < 1925 || dataSeparada[2] > 2013) {
+            isValid = 'dataNascimentoInvalido'
+            return isValid
+        }
+
+        // Validar email null
+        if (!this.cadastroEmail == undefined || this.cadastroEmail == "" || this.cadastroEmail == null) {
+            isValid = 'email'
+            return isValid
+        }
+
+        // Validar Email com Regex)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!this.cadastroEmail || !emailRegex.test(this.cadastroEmail)) {
+            isValid = 'emailInvalido'
+            return isValid
+        }
+
+        // Validar Senha null
+        if (!this.cadastroSenha == undefined || this.cadastroSenha == "" || this.cadastroSenha == null) {
+            isValid = 'senha'
+            return isValid
+        }
+
+        // Validar complexidade da senha
+        const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+        if (!senhaRegex.test(this.cadastroSenha)) {
+            isValid = 'senhaInvalida'
+            return isValid
+        }
+
+        let senhaConfirmacao = document.getElementById("confirmaCadastroSenha").value
+
+        // Validar Senha confirmação
+        if (!senhaConfirmacao == undefined || senhaConfirmacao == "" || senhaConfirmacao == null) {
+            isValid = 'senhaConfirmacaonull'
+            return isValid
+        }
+
+        if (this.cadastroSenha !== senhaConfirmacao) {
+            isValid = 'senhaNaoConfere'
+            return isValid
+        }
+
+
+        return isValid
+    }
+}
+
+
 class Bd {
 
     constructor() {
@@ -97,34 +177,42 @@ class Bd {
 let bd = new Bd()
 
 class Modal {
-    constructor(title, cor, body, btn, btn2, btn2text, excluir = false, id) {
+    constructor(title, cor, body, btn, btn2, btn2text, confirma, id) {
         this.title = title;
         this.cor = cor;
         this.body = body;
         this.btn = btn;
         this.btn2 = btn2;
         this.btn2text = btn2text
-        this.excluir = excluir
+        this.confirma = confirma
         this.id = id
     }
 
     mostrarModal() {
 
-        console.log(this.id)
-        if (this.excluir == true) {
+        if (this.confirma == 'excluirTrue') {
             document.getElementById("btnModal").onclick = () => {
                 bd.remover(this.id)
                 window.location.reload()
             }
-        } else {
+        } else if (this.confirma == 'cadastrarTrue') {
+            document.getElementById("btnModal").onclick = () => {
+                window.location.href = "login.html"
+            }
+        } else if (this.confirma == 'sairTrue') {
             document.getElementById("btn2Modal").onclick = () => {
                 window.location.href = "index.html"
+            }
+        } else if (this.confirma == 'loginTrue') {
+            document.getElementById("btnModal").onclick = () => {
+                window.location.href = "cadastrar.html"
             }
         }
 
         document.getElementById("titleModal").innerHTML = this.title;
         document.getElementById("titleModal").className = "modal-title fs-5 text-" + this.cor;
         document.getElementById("bodyModal").innerHTML = this.body;
+        document.getElementById("bodyModal").className = "text-start ms-3 my-2";
         document.getElementById("btnModal").innerHTML = this.btn;
         document.getElementById("btnModal").className = "btn btn-" + this.cor;
         document.getElementById("btn2Modal").innerHTML = this.btn2text;
@@ -162,6 +250,7 @@ function cadastrarTarefa() {
             "Nova tarefa",
             "btn btn-secondary",
             "Sair",
+            'sairTrue'
         );
         limparCampos()
         modal.mostrarModal();
@@ -170,6 +259,126 @@ function cadastrarTarefa() {
             "Existem campos inválidos",
             "danger",
             "Verifique se todos os campos foram preenchidos corretamente!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    }
+}
+function cadastrarUsuario() {
+    let cadastroNome = document.getElementById('cadastroNome')
+    let cadastroDataNascimento = document.getElementById('cadastroDataNascimento')
+    let cadastroEmail = document.getElementById('cadastroEmail');
+    let cadastroSenha = document.getElementById('cadastroSenha');
+
+    let usuario = new Usuario(
+        cadastroNome.value,
+        cadastroDataNascimento.value.split('-').reverse().join('/'),
+        cadastroEmail.value,
+        cadastroSenha.value
+    )
+
+
+    if (usuario.validarDados() == 'ok') {
+        bd.gravar(usuario)
+        let modal = new Modal(
+            "Usuário cadastrado",
+            "success",
+            "Usuário cadastrado com sucesso!",
+            "Login",
+            "d-none",
+            null,
+            'cadastrarTrue'
+
+        );
+        modal.mostrarModal();
+        limparCamposCadastrar()
+    } else if (usuario.validarDados() == 'nome') {
+        let modal = new Modal(
+            "Preencha seu nome",
+            "danger",
+            "Verifique se o Nome foi preenchido!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'nomeInvalido') {
+        let modal = new Modal(
+            "Nome inválido",
+            "danger",
+            "O nome deve conter apenas letras!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'dataNascimento') {
+        let modal = new Modal(
+            "Informe uma Data de Nascimento",
+            "danger",
+            "Verifique se a Data de Nascimento foi preenchida!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'dataNascimentoInvalido') {
+        let modal = new Modal(
+            "Data de Nascimento inválida",
+            "danger",
+            "Verifique se a Data de Nascimento foi preenchida corretamente!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'email') {
+        let modal = new Modal(
+            "Informe seu e-mail",
+            "danger",
+            "Verifique se o E-mail foi preenchido!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'emailInvalido') {
+        let modal = new Modal(
+            "Informe um e-mail válido",
+            "danger",
+            "Verifique se o E-mail foi preenchido corretamente!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'senha') {
+        let modal = new Modal(
+            "Você deve informar uma senha",
+            "danger",
+            "Verifique se a senha foi preenchida!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'senhaInvalida') {
+        let modal = new Modal(
+            "Senha inválida",
+            "danger",
+            "A senha deve ter no mínimo 8 caracteres, letra maiúscula, minúscula, número e caractere especial!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'senhaConfirmacaonull') {
+        let modal = new Modal(
+            "Confirme sua senha",
+            "danger",
+            "Você deve confirmar sua senha!",
+            "Voltar e corrigir",
+            "d-none"
+        );
+        modal.mostrarModal();
+    } else if (usuario.validarDados() == 'senhaNaoConfere') {
+        let modal = new Modal(
+            "As senhas não conferem",
+            "danger",
+            "Verifique se as senhas são iguais!",
             "Voltar e corrigir",
             "d-none"
         );
@@ -198,6 +407,14 @@ function limparCampos() {
     if (categoria) categoria.checked = false
 }
 
+function limparCamposCadastrar() {
+    document.getElementById('cadastroNome').value = ""
+    document.getElementById('cadastroDataNascimento').value = ""
+    document.getElementById('cadastroEmail').value = ""
+    document.getElementById('cadastroSenha').value = ""
+    document.getElementById('confirmaCadastroSenha').value = ""
+}
+
 function carregaListaTarefas(tarefas = Array(), filtro = false) {
 
     if (tarefas.length == 0 && filtro == false) {
@@ -222,39 +439,41 @@ function carregaListaTarefas(tarefas = Array(), filtro = false) {
     listaTarefas.innerHTML = ''
 
     tarefas.forEach(function (t) {
+        if (t.dataTarefa != undefined) {
 
-        let linha = listaTarefas.insertRow()
+            let linha = listaTarefas.insertRow()
 
-        linha.insertCell(0).innerHTML = t.dataTarefa
-        linha.insertCell(1).innerHTML = t.nomeTarefa
-        linha.insertCell(2).innerHTML = t.statusSelecionado
-        linha.insertCell(3).innerHTML = t.prioridadeSelecionada
-        linha.insertCell(4).innerHTML = t.categoriaSelecionada
-        if (t.obsTarefa == '') {
-            linha.insertCell(5).innerHTML = '---'
-        } else {
-            linha.insertCell(5).innerHTML = t.obsTarefa
+            linha.insertCell(0).innerHTML = t.dataTarefa
+            linha.insertCell(1).innerHTML = t.nomeTarefa
+            linha.insertCell(2).innerHTML = t.statusSelecionado
+            linha.insertCell(3).innerHTML = t.prioridadeSelecionada
+            linha.insertCell(4).innerHTML = t.categoriaSelecionada
+            if (t.obsTarefa == '') {
+                linha.insertCell(5).innerHTML = '---'
+            } else {
+                linha.insertCell(5).innerHTML = t.obsTarefa
+            }
+            let btn = document.createElement("button")
+            btn.className = 'btn text-danger p-0'
+            btn.innerHTML = '<i class="bi bi-trash3-fill"></i>'
+            btn.id = `id_tarefa_${t.id}`
+            btn.onclick = function () {
+                let id = this.id.replace('id_tarefa_', '')
+                let modal = new Modal(
+                    "Excluir tarefa",
+                    "danger",
+                    "Deseja excluir essa tarefa?",
+                    "Excluir",
+                    "btn btn-secondary",
+                    "Cancelar",
+                    'excluirTrue',
+                    id
+                );
+                modal.mostrarModal();
+
+            }
+            linha.insertCell(6).append(btn)
         }
-        let btn = document.createElement("button")
-        btn.className = 'btn text-danger p-0'
-        btn.innerHTML = '<i class="bi bi-trash3-fill"></i>'
-        btn.id = `id_tarefa_${t.id}`
-        btn.onclick = function () {
-            let id = this.id.replace('id_tarefa_', '')
-            let modal = new Modal(
-                "Excluir tarefa",
-                "danger",
-                "Deseja excluir essa tarefa?",
-                "Excluir",
-                "btn btn-secondary",
-                "Cancelar",
-                true,
-                id
-            );
-            modal.mostrarModal();
-
-        }
-        linha.insertCell(6).append(btn)
     })
 }
 
@@ -281,29 +500,79 @@ function pesquisarTarefa() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function entrar() {
-    window.location.href = "index.html"
+    let usuarios = Array()
+    let email = document.getElementById('email')
+    let senha = document.getElementById('senha')
+
+    let id = localStorage.getItem('id')
+    let usuarioExisteEmail
+
+
+    //recupera todas as tarefas armazenadas em localStorage
+    for (let i = 1; i <= id; i++) {
+        //recupera a despesa
+        let usuario = JSON.parse(localStorage.getItem(i))
+        usuarioExisteEmail = null
+        
+        if (usuario === null) {
+            continue
+        }
+        
+        if (usuario.dataTarefa != undefined) {
+            continue
+        }
+        
+        if (email.value == '') {
+            usuarioExisteEmail = undefined
+            let modal = new Modal(
+                "Informe um e-mail",
+                "danger",
+                "Primeiro informe um e-mail para continuar!",
+                "Cadastrar",
+                "btn btn-secondary",
+                "Tentar novamente",
+                'loginTrue'
+            );
+            modal.mostrarModal();
+            continue
+        }
+
+        if (usuario.cadastroEmail === email.value) {
+            usuarioExisteEmail = usuario.cadastroEmail
+            if (usuario.cadastroSenha === senha.value) {
+                window.location.href = "index.html"
+            } else {
+                let modal = new Modal(
+                    "Usuário ou senha incorreto",
+                    "danger",
+                    "Confira seus dados e tente novamente!",
+                    "Cadastrar",
+                    "btn btn-secondary",
+                    "Tentar novamente"
+                );
+                modal.mostrarModal();
+                break
+            }
+        }
+
+        usuario.id = i
+        usuarios.push(usuario)
+
+    }
+
+    if (usuarioExisteEmail === null) {
+        let modal = new Modal(
+            "Usuário não encontrado",
+            "danger",
+            "Clique em cadastrar para fazer o seu cadastro!",
+            "Cadastrar",
+            "btn btn-secondary",
+            "Tentar novamente",
+            'loginTrue'
+        );
+        modal.mostrarModal();
+    }
+
+
 }
