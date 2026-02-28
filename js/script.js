@@ -455,6 +455,12 @@ function carregaListaTarefas(tarefas = Array(), filtro = false) {
 
     let nomeUser = localStorage.getItem('nomeUser')
     let usuarioExisteEmail = localStorage.getItem('usuarioExisteEmail')
+
+    if (!usuarioExisteEmail) {
+        window.location.href = "login.html"
+        return
+    }
+
     let dataNascimentoUser = localStorage.getItem('dataNascimentoUser')
     nomeUser = nomeUser.charAt(0).toUpperCase() + nomeUser.slice(1);
     document.getElementById('nomeMeuPerfil').value = nomeUser
@@ -753,9 +759,7 @@ function recuperarSenha() {
         const templateParams = {
             to_name: usuarioEncontrado.cadastroNome,
             to_email: email,
-            // Como é um projeto local, estamos enviando a senha recuperada. 
-            // Em um sistema real, enviaríamos um link com token único.
-            message: "Sua senha recuperada é: " + usuarioEncontrado.cadastroSenha 
+            link_recuperacao: window.location.href.replace('esqueceu-senha.html', 'recuperar-senha.html')
         };
 
         console.log("Enviando para EmailJS:", templateParams);
