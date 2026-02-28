@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="img/faviconn.png" type="image/x-icon">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- BootStrap -->
+    <link href="css/bootstrap/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <title>Agendador de tarefas</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+                <div class="modal fade" tabindex="-1" id="modalCadastrarNovaSenha">
+                    <!-- Início modal Cadastrar nova senha -->
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Alteração de senha</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p>Digite sua nova senha:</p>
+                                <input type="password" class="form-control bg-dark border-light text-light" id="">
+                                <p>Confirme sua senha:</p>
+                                <input type="password" class="form-control bg-dark border-light text-light" id="">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-success">Alterar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Fim modal Cadastrar nova senha -->
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/script.js"></script>
+    <!-- BootStrap -->
+    <script src="libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/90b19570b9.js" crossorigin="anonymous"></script>
+    <script>
+        window.addEventListener('load', () => {
+            const modal = new bootstrap.Modal(document.getElementById('modalCadastrarNovaSenha'));
+            modal.show();
+        })
+    </script>
+</body>
+
+</html>

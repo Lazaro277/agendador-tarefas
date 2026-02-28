@@ -723,7 +723,7 @@ document.getElementById('modalPerfil').addEventListener('hidden.bs.modal', funct
 });
 
 function recuperarSenha() {
-    let email = document.getElementById('emailRecuperacao').value
+    let email = document.getElementById('emailRecuperacao').value.trim()
     
     if(email === '') {
         let modal = new Modal(
@@ -758,8 +758,9 @@ function recuperarSenha() {
             message: "Sua senha recuperada é: " + usuarioEncontrado.cadastroSenha 
         };
 
-        // Substitua 'SERVICE_ID' e 'TEMPLATE_ID' pelos IDs criados no painel do EmailJS
-        emailjs.send('SERVICE_ID', 'TEMPLATE_ID', templateParams)
+        console.log("Enviando para EmailJS:", templateParams);
+
+        emailjs.send('service_be9k92k', 'template_q09oryw', templateParams)
             .then(function(response) {
                 let modal = new Modal(
                     "Sucesso",
