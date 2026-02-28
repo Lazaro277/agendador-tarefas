@@ -480,8 +480,8 @@ function carregaListaTarefas(tarefas = Array(), filtro = false) {
             
             // Carregar foto de perfil salva do usuário
             if (usuario.fotoPerfil) {
-                let imgNav = document.querySelector('.navbar-collapse img');
-                if(imgNav) imgNav.src = usuario.fotoPerfil;
+                let imgsNav = document.querySelectorAll('.navbar-collapse img');
+                imgsNav.forEach(img => img.src = usuario.fotoPerfil);
                 let imgModal = document.getElementById('imgPerfilModal');
                 if(imgModal) imgModal.src = usuario.fotoPerfil;
             }
@@ -491,6 +491,10 @@ function carregaListaTarefas(tarefas = Array(), filtro = false) {
 
     nomeUser = nomeUser.split(' ')
     document.getElementById('nomeUser').innerHTML = nomeUser[0]
+    let nomeUserMobile = document.getElementById('nomeUserMobile')
+    if (nomeUserMobile) {
+        nomeUserMobile.innerHTML = nomeUser[0]
+    }
 
     if (tarefas.length == 0 && filtro == false) {
         tarefas = bd.recuperarTodosRegistros()
@@ -849,8 +853,8 @@ function salvarPerfil() {
         }
 
     // Atualiza a navbar imediatamente
-    let imgNav = document.querySelector('.navbar-collapse img');
-    if (imgNav) imgNav.src = src;
+    let imgsNav = document.querySelectorAll('.navbar-collapse img');
+    imgsNav.forEach(img => img.src = src);
     
     // Fecha o modal
     let modalElement = document.getElementById('modalPerfil');
