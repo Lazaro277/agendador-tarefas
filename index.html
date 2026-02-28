@@ -38,7 +38,7 @@
                             <li><a href="#" href="#" class="dropdown-item">Minhas tarefas</a></li>
                             <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalCadastro" class="dropdown-item">Criar
                                     nova tarefa</a></li>
-                            <li><a href="login.html" class="dropdown-item">Sair</a></li>
+                            <li><a href="#" class="dropdown-item" onclick="sair()">Sair</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -171,7 +171,7 @@
 
                                     <label for="emailMeuPerfil" class="form-label">Email:</label>
                                     <div class="input-group mb-3">
-                                        <input type="email" class="form-control" id="emailMeuPerfil">
+                                        <input type="email" class="form-control" id="emailMeuPerfil" disabled>
                                         <a data-bs-toggle="modal" data-bs-target="#modalRedefinirEmail"
                                             class="btn btn-primary" type="button" id="alterarEmailMeuPerfil">Alterar</a>
                                     </div>
@@ -204,16 +204,15 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
-                                <p>Digite o código de verificação enviado para <span
-                                        class="lead fs-5">emailnovo@gmail.com</span>:</p>
-                                <input type="text"
+                                <p>Informe abaixo o seu novo email:</p>
+                                <input type="email"
                                     class=" border-top-0 border-start-0 border-end-0 bg-dark border-light text-light"
-                                    id="">
+                                    id="emailNovo">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
                                     data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-success">Redefinir</button>
+                                <button type="button" class="btn btn-success" onclick="trocarEmail()">Redefinir</button>
                             </div>
                         </div>
                     </div>
@@ -229,17 +228,15 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
-                                <p>Digite o código de verificação enviado para <span
-                                        class="lead fs-5">****ail@gmail.com</span>:</p>
-                                <input type="text"
+                                <p>Informe abaixo a sua nova senha:</p>
+                                <input type="password"
                                     class=" border-top-0 border-start-0 border-end-0 bg-dark border-light text-light"
-                                    id="">
+                                    id="senhaNova">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
                                     data-bs-dismiss="modal">Cancelar</button>
-                                <button data-bs-toggle="modal" data-bs-target="#modalCadastrarNovaSenha" type="button"
-                                    class="btn btn-success">Continuar</button>
+                                <button type="button" class="btn btn-success" onclick="trocarSenha()">Redefinir</button>
                             </div>
                         </div>
                     </div>

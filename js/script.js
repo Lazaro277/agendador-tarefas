@@ -213,6 +213,10 @@ class Modal {
 
     mostrarModal() {
 
+        // Limpa eventos de clique anteriores para evitar conflitos
+        document.getElementById("btnModal").onclick = null;
+        document.getElementById("btn2Modal").onclick = null;
+
         if (this.confirma == 'excluirTrue') {
             document.getElementById("btnModal").onclick = () => {
                 bd.remover(this.id)
@@ -580,9 +584,9 @@ function entrar() {
     let id = localStorage.getItem('id')
 
 
-    //recupera todas as tarefas armazenadas em localStorage
+    //recupera todas os usuarios armazenadas em localStorage
     for (let i = 1; i <= id; i++) {
-        //recupera a despesa
+        //recupera o usuario
         let usuario = JSON.parse(localStorage.getItem(i))
         usuarioExisteEmail = null
 
@@ -650,6 +654,152 @@ function entrar() {
     }
 
 
+}
+
+function sair() {
+    window.location.href = 'login.html'
+    localStorage.removeItem('usuarioExisteEmail')
+}
+
+function trocarEmail() {
+    let emailNovo = document.getElementById('emailNovo').value.trim();
+
+    if (emailNovo == '') {
+        let modal = new Modal(
+            "Informe um e-mail",
+            "danger",
+            "Primeiro informe um e-mail para continuar!",
+            "Tentar novamente",
+            "d-none"
+        );
+        modal.mostrarModal();
+        return;
+    }
+
+    let id = localStorage.getItem('id')
+    let emailUser = localStorage.getItem('usuarioExisteEmail')
+
+    for (let i = 1; i <= id; i++) {
+        let usuarioCheck = JSON.parse(localStorage.getItem(i))
+        
+        // Verifica se é um usuário válido e se não é o próprio usuário logado
+        if (usuarioCheck && usuarioCheck.cadastroEmail) {
+            if (usuarioCheck.cadastroEmail === emailUser) continue;
+
+            if (usuarioCheck.cadastroEmail.trim().toLowerCase() === emailNovo.toLowerCase()) {
+                let modal = new Modal(
+                    "E-mail indisponível",
+                    "danger",
+                    "O e-mail informado já está cadastrado!",
+                    "Tentar novamente",
+                    "d-none"
+                );
+                modal.mostrarModal();
+                return;
+            }
+        }
+    }
+
+    let userUpdated = false
+
+    //recupera todas os usuarios armazenadas em localStorage
+    for (let i = 1; i <= id; i++) {
+        //recupera o usuario
+        let usuario = JSON.parse(localStorage.getItem(i))
+
+        if (usuario === null) {
+            continue
+        }
+
+        if (usuario.dataTarefa != undefined) {
+            if (usuario.emailUser == emailUser) {
+                usuario.emailUser = emailNovo
+                localStorage.setItem(i, JSON.stringify(usuario))
+            }
+            continue
+        }
+
+        if(usuario.cadastroEmail == emailUser) {
+            usuario.cadastroEmail = emailNovo
+            localStorage.setItem(i, JSON.stringify(usuario))
+            userUpdated = true
+        }
+    }
+
+    if (userUpdated) {
+        localStorage.setItem('usuarioExisteEmail', emailNovo)
+        window.location.reload()
+    }
+
+}
+
+function trocarSenha() {
+    let senhaNova = document.getElementById('senhaNova').value.trim();
+
+    if (senhaNova == '') {
+        let modal = new Modal(
+            "Informe uma senha",
+            "danger",
+            "Primeiro informe uma senha para continuar!",
+            "Tentar novamente",
+            "d-none"
+        );
+        modal.mostrarModal();
+        return;
+    }
+
+    // Validar complexidade da senha (mesma regex do cadastro)
+    const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+    if (!senhaRegex.test(senhaNova)) {
+        let modal = new Modal(
+            "Senha inválida",
+            "danger",
+            "A senha deve ter no mínimo 8 caracteres, letra maiúscula, minúscula, número e caractere especial!",
+            "Tentar novamente",
+            "d-none"
+        );
+        modal.mostrarModal();
+        return;
+    }
+
+    let id = localStorage.getItem('id')
+    let emailUser = localStorage.getItem('usuarioExisteEmail')
+    let userUpdated = false
+
+    for (let i = 1; i <= id; i++) {
+        let usuario = JSON.parse(localStorage.getItem(i))
+
+        if (usuario === null) {
+            continue
+        }
+
+        if (usuario.dataTarefa != undefined) {
+            continue
+        }
+
+        if (usuario.cadastroEmail == emailUser) {
+            if (usuario.cadastroSenha === senhaNova) {
+                let modal = new Modal(
+                    "Senha igual",
+                    "danger",
+                    "A nova senha não pode ser igual à atual!",
+                    "Tentar novamente",
+                    "d-none"
+                );
+                modal.mostrarModal();
+                return;
+            }
+
+            usuario.cadastroSenha = senhaNova
+            localStorage.setItem(i, JSON.stringify(usuario))
+            userUpdated = true
+            break
+        }
+    }
+
+    if (userUpdated) {
+        window.location.reload()
+    }
 }
 
 function atualizarFotoPerfil(input) {
