@@ -52,8 +52,21 @@ class Usuario {
             return isValid
         }
 
-        let dataSeparada = this.cadastroDataNascimento.split('/')
-        if (dataSeparada[2] < 1925 || dataSeparada[2] > 2013) {
+        let dataSeparada = this.cadastroDataNascimento.split('/').map(Number)
+
+        let dia = dataSeparada[0]
+        let mes = dataSeparada[1]
+        let ano = dataSeparada[2]
+
+        let data = new Date(ano, mes - 1, dia)
+
+        if (
+            ano < 1925 ||
+            ano > 2013 ||
+            data.getDate() !== dia ||
+            data.getMonth() !== mes - 1 ||
+            data.getFullYear() !== ano
+        ) {
             isValid = 'dataNascimentoInvalido'
             return isValid
         }
@@ -79,7 +92,7 @@ class Usuario {
             if (usuario === null) {
                 continue
             }
-            if (usuario.cadastroEmail == cadastroEmail.value) {
+            if (usuario.cadastroEmail && usuario.cadastroEmail.trim().toLowerCase() === this.cadastroEmail.trim().toLowerCase()) {
                 isValid = 'emailExiste'
                 return isValid
             }
@@ -151,7 +164,7 @@ class Bd {
             //recupera a despesa
             let tarefa = JSON.parse(localStorage.getItem(i))
 
-            if (tarefa === null) {
+            if (!tarefa || tarefa.dataTarefa === undefined) {
                 continue
             }
             if (tarefa.dataTarefa == undefined) {
@@ -172,13 +185,17 @@ class Bd {
         tarefasFiltradas = this.recuperarTodosRegistros()
 
         if (tarefa.nomeTarefa != '') {
-            tarefasFiltradas = tarefasFiltradas.filter(t => t.nomeTarefa == tarefa.nomeTarefa)
+            tarefasFiltradas = tarefasFiltradas.filter(t =>
+                t.nomeTarefa.toLowerCase().includes(tarefa.nomeTarefa.trim().toLowerCase())
+            )
         }
         if (tarefa.dataTarefa != '') {
             tarefasFiltradas = tarefasFiltradas.filter(t => t.dataTarefa == tarefa.dataTarefa)
         }
         if (tarefa.obsTarefa != '') {
-            tarefasFiltradas = tarefasFiltradas.filter(t => t.obsTarefa == tarefa.obsTarefa)
+            tarefasFiltradas = tarefasFiltradas.filter(t =>
+                t.obsTarefa.toLowerCase().includes(tarefa.obsTarefa.trim().toLowerCase())
+            )
         }
         if (tarefa.statusSelecionado != '') {
             tarefasFiltradas = tarefasFiltradas.filter(t => t.statusSelecionado == tarefa.statusSelecionado)
@@ -262,7 +279,7 @@ function cadastrarTarefa() {
 
     let tarefa = new Tarefa(
         nomeTarefa.value,
-        dataTarefa.value.split('-').reverse().join('/'),
+        dataTarefa.value ? dataTarefa.value.split('-').reverse().join('/') : '',
         statusSelecionado ? statusSelecionado.value : '',
         prioridadeSelecionada ? prioridadeSelecionada.value : '',
         categoriaSelecionada ? categoriaSelecionada.value : '',
@@ -302,13 +319,14 @@ function cadastrarUsuario() {
 
     let usuario = new Usuario(
         cadastroNome.value,
-        cadastroDataNascimento.value.split('-').reverse().join('/'),
+        cadastroDataNascimento.value ? cadastroDataNascimento.value.split('-').reverse().join('/') : '',
         cadastroEmail.value,
         cadastroSenha.value
     )
 
+    let resultadoValidacao = usuario.validarDados()
 
-    if (usuario.validarDados() == 'ok') {
+    if (resultadoValidacao == 'ok') {
         bd.gravar(usuario)
         let modal = new Modal(
             "Usuário cadastrado",
@@ -322,7 +340,7 @@ function cadastrarUsuario() {
         );
         modal.mostrarModal();
         limparCamposCadastrar()
-    } else if (usuario.validarDados() == 'nome') {
+    } else if (resultadoValidacao == 'nome') {
         let modal = new Modal(
             "Preencha seu nome",
             "danger",
@@ -331,7 +349,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'nomeInvalido') {
+    } else if (resultadoValidacao == 'nomeInvalido') {
         let modal = new Modal(
             "Nome inválido",
             "danger",
@@ -340,7 +358,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'dataNascimento') {
+    } else if (resultadoValidacao == 'dataNascimento') {
         let modal = new Modal(
             "Informe uma Data de Nascimento",
             "danger",
@@ -349,7 +367,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'dataNascimentoInvalido') {
+    } else if (resultadoValidacao == 'dataNascimentoInvalido') {
         let modal = new Modal(
             "Data de Nascimento inválida",
             "danger",
@@ -358,7 +376,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'email') {
+    } else if (resultadoValidacao == 'email') {
         let modal = new Modal(
             "Informe seu e-mail",
             "danger",
@@ -367,7 +385,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'emailInvalido') {
+    } else if (resultadoValidacao == 'emailInvalido') {
         let modal = new Modal(
             "Informe um e-mail válido",
             "danger",
@@ -376,7 +394,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'emailExiste') {
+    } else if (resultadoValidacao == 'emailExiste') {
         let modal = new Modal(
             "E-mail já cadastrado",
             "success",
@@ -387,7 +405,7 @@ function cadastrarUsuario() {
             'cadastrarTrue'
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'senha') {
+    } else if (resultadoValidacao == 'senha') {
         let modal = new Modal(
             "Você deve informar uma senha",
             "danger",
@@ -396,7 +414,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'senhaInvalida') {
+    } else if (resultadoValidacao == 'senhaInvalida') {
         let modal = new Modal(
             "Senha inválida",
             "danger",
@@ -405,7 +423,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'senhaConfirmacaonull') {
+    } else if (resultadoValidacao == 'senhaConfirmacaonull') {
         let modal = new Modal(
             "Confirme sua senha",
             "danger",
@@ -414,7 +432,7 @@ function cadastrarUsuario() {
             "d-none"
         );
         modal.mostrarModal();
-    } else if (usuario.validarDados() == 'senhaNaoConfere') {
+    } else if (resultadoValidacao == 'senhaNaoConfere') {
         let modal = new Modal(
             "As senhas não conferem",
             "danger",
@@ -522,15 +540,15 @@ function carregaListaTarefas(tarefas = Array(), filtro = false) {
 
             let linha = listaTarefas.insertRow()
 
-            linha.insertCell(0).innerHTML = t.dataTarefa
-            linha.insertCell(1).innerHTML = t.nomeTarefa
-            linha.insertCell(2).innerHTML = t.statusSelecionado
-            linha.insertCell(3).innerHTML = t.prioridadeSelecionada
-            linha.insertCell(4).innerHTML = t.categoriaSelecionada
+            linha.insertCell(0).textContent = t.dataTarefa
+            linha.insertCell(1).textContent = t.nomeTarefa
+            linha.insertCell(2).textContent = t.statusSelecionado
+            linha.insertCell(3).textContent = t.prioridadeSelecionada
+            linha.insertCell(4).textContent = t.categoriaSelecionada
             if (t.obsTarefa == '') {
                 linha.insertCell(5).innerHTML = '---'
             } else {
-                linha.insertCell(5).innerHTML = t.obsTarefa
+                linha.insertCell(5).textContent = t.obsTarefa
             }
             let btn = document.createElement("button")
             btn.className = 'btn text-danger p-0'
@@ -579,11 +597,40 @@ function pesquisarTarefa() {
 }
 
 
+
 function entrar() {
     let usuarios = Array()
     let email = document.getElementById('email')
     let senha = document.getElementById('senha')
-    let usuarioExisteEmail
+    let usuarioExisteEmail = null
+
+    if (email.value.trim() === '') {
+        let modal = new Modal(
+            "Informe um e-mail",
+            "danger",
+            "Primeiro informe um e-mail para continuar!",
+            "Cadastrar",
+            "btn btn-secondary",
+            "Tentar novamente",
+            'loginTrue'
+        );
+        modal.mostrarModal();
+        return;
+    }
+
+    if (senha.value.trim() === '') {
+        let modal = new Modal(
+            "Informe uma senha",
+            "danger",
+            "Digite sua senha para continuar!",
+            "Cadastrar",
+            "btn btn-secondary",
+            "Tentar novamente",
+            'loginTrue'
+        );
+        modal.mostrarModal();
+        return;
+    }
 
     let id = localStorage.getItem('id')
 
@@ -602,22 +649,7 @@ function entrar() {
             continue
         }
 
-        if (email.value == '') {
-            usuarioExisteEmail = undefined
-            let modal = new Modal(
-                "Informe um e-mail",
-                "danger",
-                "Primeiro informe um e-mail para continuar!",
-                "Cadastrar",
-                "btn btn-secondary",
-                "Tentar novamente",
-                'loginTrue'
-            );
-            modal.mostrarModal();
-            continue
-        }
-
-        if (usuario.cadastroEmail === email.value) {
+        if (usuario.cadastroEmail.trim().toLowerCase() === email.value.trim().toLowerCase()) {
             usuarioExisteEmail = usuario.cadastroEmail
             if (usuario.cadastroSenha === senha.value) {
                 localStorage.setItem('usuarioExisteEmail', usuarioExisteEmail)
@@ -661,8 +693,11 @@ function entrar() {
 }
 
 function sair() {
-    window.location.href = 'login.html'
     localStorage.removeItem('usuarioExisteEmail')
+    localStorage.removeItem('nomeUser')
+    localStorage.removeItem('dataNascimentoUser')
+
+    window.location.href = 'login.html'
 }
 
 function trocarEmail() {
