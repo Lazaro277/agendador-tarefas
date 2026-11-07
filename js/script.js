@@ -47,7 +47,7 @@ class Usuario {
         }
 
         // Validar Data
-        if (!this.cadastroDataNascimento == undefined || this.cadastroDataNascimento == "" || this.cadastroDataNascimento == null) {
+        if (!this.cadastroDataNascimento) {
             isValid = 'dataNascimento'
             return isValid
         }
@@ -59,7 +59,7 @@ class Usuario {
         }
 
         // Validar email null
-        if (!this.cadastroEmail == undefined || this.cadastroEmail == "" || this.cadastroEmail == null) {
+        if (!this.cadastroEmail) {
             isValid = 'email'
             return isValid
         }
@@ -86,7 +86,7 @@ class Usuario {
         }
 
         // Validar Senha null
-        if (!this.cadastroSenha == undefined || this.cadastroSenha == "" || this.cadastroSenha == null) {
+        if (!this.cadastroSenha) {
             isValid = 'senha'
             return isValid
         }
@@ -101,7 +101,7 @@ class Usuario {
         let senhaConfirmacao = document.getElementById("confirmaCadastroSenha").value
 
         // Validar Senha confirmação
-        if (!senhaConfirmacao == undefined || senhaConfirmacao == "" || senhaConfirmacao == null) {
+        if (!senhaConfirmacao) {
             isValid = 'senhaConfirmacaonull'
             return isValid
         }
@@ -477,13 +477,13 @@ function carregaListaTarefas(tarefas = Array(), filtro = false) {
         let usuario = JSON.parse(localStorage.getItem(i))
         if (usuario && usuario.cadastroEmail === usuarioExisteEmail) {
             document.getElementById('sobreMimMeuPerfil').value = usuario.sobreMim || ''
-            
+
             // Carregar foto de perfil salva do usuário
             if (usuario.fotoPerfil) {
                 let imgsNav = document.querySelectorAll('.navbar-collapse img');
                 imgsNav.forEach(img => img.src = usuario.fotoPerfil);
                 let imgModal = document.getElementById('imgPerfilModal');
-                if(imgModal) imgModal.src = usuario.fotoPerfil;
+                if (imgModal) imgModal.src = usuario.fotoPerfil;
             }
             break
         }
@@ -685,7 +685,7 @@ function trocarEmail() {
 
     for (let i = 1; i <= id; i++) {
         let usuarioCheck = JSON.parse(localStorage.getItem(i))
-        
+
         // Verifica se é um usuário válido e se não é o próprio usuário logado
         if (usuarioCheck && usuarioCheck.cadastroEmail) {
             if (usuarioCheck.cadastroEmail === emailUser) continue;
@@ -723,7 +723,7 @@ function trocarEmail() {
             continue
         }
 
-        if(usuario.cadastroEmail == emailUser) {
+        if (usuario.cadastroEmail == emailUser) {
             usuario.cadastroEmail = emailNovo
             localStorage.setItem(i, JSON.stringify(usuario))
             userUpdated = true
@@ -829,33 +829,33 @@ function salvarPerfil() {
     let imgModal = document.getElementById('imgPerfilModal');
     let src = imgModal.src;
     let fotoPadrao = 'img/foto-de-perfil-padrao.jpg';
-    
-        // Salvar "Sobre mim" nos dados do usuário
-        let sobreMim = document.getElementById('sobreMimMeuPerfil').value
-        let emailUser = localStorage.getItem('usuarioExisteEmail')
-        let id = localStorage.getItem('id')
 
-        for (let i = 1; i <= id; i++) {
-            let usuario = JSON.parse(localStorage.getItem(i))
-            if (usuario && usuario.cadastroEmail === emailUser) {
-                usuario.sobreMim = sobreMim
+    // Salvar "Sobre mim" nos dados do usuário
+    let sobreMim = document.getElementById('sobreMimMeuPerfil').value
+    let emailUser = localStorage.getItem('usuarioExisteEmail')
+    let id = localStorage.getItem('id')
 
-                // Salvar foto no objeto do usuário
-                if (src.includes(fotoPadrao)) {
-                    delete usuario.fotoPerfil;
-                } else {
-                    usuario.fotoPerfil = src;
-                }
+    for (let i = 1; i <= id; i++) {
+        let usuario = JSON.parse(localStorage.getItem(i))
+        if (usuario && usuario.cadastroEmail === emailUser) {
+            usuario.sobreMim = sobreMim
 
-                localStorage.setItem(i, JSON.stringify(usuario))
-                break
+            // Salvar foto no objeto do usuário
+            if (src.includes(fotoPadrao)) {
+                delete usuario.fotoPerfil;
+            } else {
+                usuario.fotoPerfil = src;
             }
+
+            localStorage.setItem(i, JSON.stringify(usuario))
+            break
         }
+    }
 
     // Atualiza a navbar imediatamente
     let imgsNav = document.querySelectorAll('.navbar-collapse img');
     imgsNav.forEach(img => img.src = src);
-    
+
     // Fecha o modal
     let modalElement = document.getElementById('modalPerfil');
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -884,8 +884,8 @@ document.getElementById('modalPerfil').addEventListener('hidden.bs.modal', funct
 
 function recuperarSenha() {
     let email = document.getElementById('emailRecuperacao').value.trim()
-    
-    if(email === '') {
+
+    if (email === '') {
         let modal = new Modal(
             "Campo vazio",
             "danger",
@@ -919,7 +919,7 @@ function recuperarSenha() {
         console.log("Enviando para EmailJS:", templateParams);
 
         emailjs.send('service_be9k92k', 'template_q09oryw', templateParams)
-            .then(function(response) {
+            .then(function (response) {
                 let modal = new Modal(
                     "Sucesso",
                     "success",
@@ -930,7 +930,7 @@ function recuperarSenha() {
                     'cadastrarTrue'
                 );
                 modal.mostrarModal();
-            }, function(error) {
+            }, function (error) {
                 console.log('ERRO AO ENVIAR:', error);
                 let modal = new Modal(
                     "Erro",
