@@ -4,6 +4,8 @@ Aplicação web desenvolvida para organizar tarefas pessoais, permitindo cadastr
 
 O projeto foi desenvolvido com foco na prática de desenvolvimento web, manipulação do DOM, validação de formulários e armazenamento de dados no navegador.
 
+[Teste aqui](https://lazarom.dev/agendador-tarefas/login.html)
+
 ## Funcionalidades
 
 - **Cadastro de usuários:** criação de conta com nome, e-mail, data de nascimento e senha.
