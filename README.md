@@ -59,8 +59,8 @@ A autenticação e o armazenamento são implementados exclusivamente no navegado
 
 **Lázaro Messias**
 
-- GitHub: [@Lazaro277](https://github.com/Lazaro277)
-- LinkedIn: [Lázaro Messias](https://www.linkedin.com/in/lazaro-messias/)
+- [GitHub](https://github.com/Lazaro277)
+- [LinkedIn](https://www.linkedin.com/in/lazaro-messias/)
 
 ---
 
